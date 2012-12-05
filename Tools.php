@@ -136,5 +136,52 @@
         public static function xml2array($xml) {
             return (array) simplexml_load_string($xml);
         }
+
+        /**
+         * Formats a money integer/float to readable locale-based string
+         *
+         * @param int|float $amount
+         * @param bool $withPlus Whether to show a plus on a positve value or not
+         * @return string
+         */
+        public static function money2str($amount, $withPlus = false) {
+            $return = ($withPlus&&$amount>0) ? '+' : '';
+            return $return . number_format($amount, 2, ',', '.');
+        }
+
+        /**
+         * Formats an integer/float to readable local-based string
+         * Actually, almost the same as Tools::money2str, except that this method hides useless decimals
+         *
+         * @see Tools::money2str
+         * @param int|float $num
+         * @param bool $withPlus Whether to show a plus on a positive value or not
+         * @return string
+         */
+        public static function num2str($num, $withPlus = false) {
+            $num     = self::money2str($num, $withPlus);
+            $decimal = trim(substr($num, strpos($num, ',')), '0');
+            if ($decimal == ',') {
+                $decimal = '';
+            }
+            return substr($num, 0, strpos($num, ',')) .  $decimal;
+        }
+
+        /**
+         * Randomize array with seed
+         *
+         * @param &array $items
+         * @param int|float $seed
+         * @return void
+         */
+        public static function shuffle(&$items, $seed) {
+            @mt_srand($seed);
+            for ($i=count($items)-1; $i>0; $i--) {
+                $j = @mt_rand(0, $i);
+                $tmp = $items[$i];
+                $items[$i] = $items[$j];
+                $items[$j] = $tmp;
+            }
+        }
     
     }
